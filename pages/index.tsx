@@ -48,7 +48,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (!session?.user) {
-      router.push("/login");
+      router.push("/auth/signin");
     }
   }, [session]);
   if (isLoading) return <p className="text-center">Loading...</p>;
