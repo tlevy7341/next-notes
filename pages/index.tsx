@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { useSession, signOut } from "next-auth/react";
-import type { NextPage } from "next";
+import { useSession, signOut, getSession } from "next-auth/react";
+import type { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import useOnClickOutside from "use-onclickoutside";
@@ -15,12 +15,6 @@ import Masonry from "react-masonry-css";
 import NoteForm from "../components/NoteForm";
 import Note from "../components/Note";
 
-//Function to get all the Notes
-const getNotes = async () => {
-  const response = await fetch("http://localhost:3000/api/notes");
-  return response.json();
-};
-
 type NoteType = {
   id: string;
   email: string;
@@ -28,10 +22,14 @@ type NoteType = {
   noteBody: string;
   createdAt: Date;
 };
+const getNotes = async () => {
+  const response = await fetch("http://localhost:3000/api/notes");
+  return response.json();
+};
 
 const Home: NextPage = () => {
-  const { isLoading, data } = useQuery<NoteType[], Error>("notes", getNotes);
   const { data: session } = useSession();
+
   const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
   const buttonRef = useRef(null);
@@ -44,6 +42,9 @@ const Home: NextPage = () => {
   useOnClickOutside(buttonRef, () => {
     setShowDropdown(false);
   });
+  //Function to get all the Notes
+
+  const { isLoading, data } = useQuery<NoteType[], Error>("notes", getNotes);
 
   useEffect(() => {
     if (!session?.user) {
@@ -105,3 +106,14 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+export const getServerSideProps = async (context: NextPageContext) => {
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery("notes", getNotes);
+  return {
+    props: {
+      notes: { dehydratedState: dehydrate(queryClient) },
+      session: await getSession(context),
+    },
+  };
+};

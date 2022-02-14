@@ -1,11 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import {prisma} from "../../../utils/prisma";
+import { getSession } from "next-auth/react"
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     //Get all of the notes from the database
   if (req.method === "GET") {
     try {
+      const session = await getSession({ req })
+      const email: string = session!.user!.email!;
        const notes = await prisma.notes.findMany({
+          where: {
+            email: email
+          },
            orderBy: {
             createdAt: 'desc',
         },
@@ -46,6 +52,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(200).json({ updatedNote }); 
     } catch (error) {
       res.status(500).json({ error: "Unable to delete the note" });
+    }finally {
+        prisma.$disconnect();
     }
     //Deletes a note from the database
   } else if (req.method == "DELETE") {
@@ -59,6 +67,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(200).json({ deletedNote }); 
     } catch (error) {
       res.status(500).json({ error: "Unable to delete the note" });
+    }finally {
+        prisma.$disconnect();
     }
   } 
 };

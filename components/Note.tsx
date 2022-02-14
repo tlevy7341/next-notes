@@ -28,19 +28,25 @@ const Note = ({ id, email, noteTitle, noteBody }: NoteType) => {
     formState: { errors },
     handleSubmit,
     reset,
-  } = useForm<FormData>();
+  } = useForm<FormData>({
+    defaultValues: {
+      noteTitle,
+      noteBody,
+    },
+  });
   const { ref: noteTitleRef, ...titleProps } = register("noteTitle", {
-    required: true,
+    required: "Note Title is required",
   });
   const { ref: noteBodyRef, ...bodyProps } = register("noteBody", {
-    required: true,
+    required: "Note Body is required",
   });
 
   const handleOnNoteClicked = (e: any) => {
     setIsSelected(true);
     if (
-      e.target instanceof SVGElement ||
-      e.target instanceof HTMLButtonElement
+      (e.target instanceof SVGElement ||
+        e.target instanceof HTMLButtonElement) &&
+      !errors
     ) {
       setIsSelected(false);
     }
@@ -63,6 +69,7 @@ const Note = ({ id, email, noteTitle, noteBody }: NoteType) => {
       textAreaRef.current.readOnly = true;
     }
     setIsSelected(false);
+    reset();
   });
 
   //Function to update a note
@@ -134,58 +141,62 @@ const Note = ({ id, email, noteTitle, noteBody }: NoteType) => {
   }, []);
 
   return (
-    <form
-      onSubmit={handleSubmit(submitNote)}
-      ref={clickRef}
-      onClick={(e) => handleOnNoteClicked(e)}
-      className={`flex flex-col border border-cool-gray-100 shadow-md shadow-blue-gray-900 rounded`}
-    >
-      <input
-        className="outline-none bg-blue-gray-800 text-cool-gray-100 font-semibold px-3 py-1"
-        readOnly
-        autoComplete="off"
-        ref={(e) => {
-          noteTitleRef(e);
-          inputRef.current = e;
-        }}
-        defaultValue={noteTitle}
-        {...titleProps}
-      />
-      <textarea
-        className="overflow-hidden resize-none outline-none bg-blue-gray-800 text-cool-gray-100 px-3 py-2 mt-1"
-        readOnly
-        ref={(e) => {
-          noteBodyRef(e);
-          textAreaRef.current = e;
-        }}
-        defaultValue={noteBody}
-        {...bodyProps}
-      />
-      <div
-        className={`flex justify-between pt-2  ${
-          isSelected ? "opacity-100 transition" : "opacity-0 transition"
-        }`}
-      >
-        <button
-          onClick={() => {
-            deleteMutation.mutate({ id, email, noteTitle, noteBody });
-          }}
-          className={`mx-3 my-1 ${
-            isSelected ? "cursor-pointer" : "cursor-default"
-          } `}
-        >
-          <FaTrash className="text-red-500" />
-        </button>
-        <button
-          type="submit"
-          className={`text-teal-700 mx-3 my-1 ${
-            isSelected ? "cursor-pointer" : "cursor-default"
-          } `}
-        >
-          <FaSave />
-        </button>
+    <>
+      <div className="text-red-500 text-sm font-semibold sm:(pb-6 !m-0 h-4)">
+        {/* Display error message if there is one */}
+        {errors.noteTitle?.message || errors.noteBody?.message}
       </div>
-    </form>
+      <form
+        onSubmit={handleSubmit(submitNote)}
+        ref={clickRef}
+        onClick={(e) => handleOnNoteClicked(e)}
+        className={`flex flex-col border border-cool-gray-100 shadow-md shadow-blue-gray-900 rounded`}
+      >
+        <input
+          className="outline-none bg-blue-gray-800 text-cool-gray-100 font-semibold px-3 py-1"
+          readOnly
+          autoComplete="off"
+          ref={(e) => {
+            noteTitleRef(e);
+            inputRef.current = e;
+          }}
+          {...titleProps}
+        />
+        <textarea
+          className="overflow-hidden resize-none outline-none bg-blue-gray-800 text-cool-gray-100 px-3 py-2 mt-1"
+          readOnly
+          ref={(e) => {
+            noteBodyRef(e);
+            textAreaRef.current = e;
+          }}
+          {...bodyProps}
+        />
+        <div
+          className={`flex justify-between pt-2  ${
+            isSelected ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <button
+            onClick={() => {
+              deleteMutation.mutate({ id, email, noteTitle, noteBody });
+            }}
+            className={`mx-3 my-1 text-sm ${
+              isSelected ? "cursor-pointer" : "cursor-default"
+            } `}
+          >
+            <FaTrash className="text-red-500" />
+          </button>
+          <button
+            type="submit"
+            className={`text-teal-700 mx-3 my-1 ${
+              isSelected ? "cursor-pointer" : "cursor-default"
+            } `}
+          >
+            <FaSave />
+          </button>
+        </div>
+      </form>
+    </>
   );
 };
 

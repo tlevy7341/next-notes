@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { FaTimes, FaLongArrowAltRight } from "react-icons/fa";
 import useOnClickOutside from "use-onclickoutside";
 import { useForm } from "react-hook-form";
@@ -27,18 +27,21 @@ const NoteForm = ({ email }: EmailType) => {
   //Variable to control the textarea being shown
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Ref for the Text Area
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
   //Variables to handle the form
-
   const formRef = useRef(null);
   const {
     register,
     formState: { errors },
     handleSubmit,
     reset,
+    clearErrors,
   } = useForm<FormData>();
-  const { ref, ...rest } = register("noteBody", { required: true });
+  const { ref, ...rest } = register("noteBody", {
+    required: "Note Body is required",
+  });
 
   //Function to send the new note to the server
   const addNote = (newNote: NoteType) => {
@@ -77,10 +80,13 @@ const NoteForm = ({ email }: EmailType) => {
     //Update the UI prior to the cache updating
     onMutate: (noteToAdd: NoteType) => {
       closeInput();
+      // Snapshot the previous value
       const previousNotes = queryClient.getQueryData("notes");
+      // Optimistically update to the new value
       queryClient.setQueryData("notes", (prevNotes: any) => {
         return [noteToAdd, ...prevNotes];
       });
+      // Return a context object with the snapshotted value
       return { previousNotes };
     },
     //If there was an error updating the cache, rollback the data
@@ -95,19 +101,21 @@ const NoteForm = ({ email }: EmailType) => {
     },
   });
 
-  useEffect(() => {
-    //Sets the height of the note based on the content
+  //Extends the Textarea as the text grows
+  const onChangeHandler = function (e: any) {
+    clearErrors();
+    const target = e.target as HTMLTextAreaElement;
     if (textAreaRef.current) {
-      textAreaRef.current.style.height = "0px";
-      const scrollHeight = textAreaRef.current.scrollHeight;
-      textAreaRef.current.style.height = scrollHeight + "px";
+      textAreaRef.current.style.height = "50px";
+      textAreaRef.current.style.height = `${target.scrollHeight}px`;
     }
-  }, []);
+  };
 
   return (
     <div className="flex flex-col justify-center  items-center pt-10">
       <span className="text-red-500 font-semibold pb-2">
-        {(errors.noteTitle || errors.noteBody) && "Required Fields are missing"}
+        {/* Display error message if there is one */}
+        {errors.noteTitle?.message || errors.noteBody?.message}
       </span>
       <form
         ref={formRef}
@@ -126,10 +134,11 @@ const NoteForm = ({ email }: EmailType) => {
             className={`px-5 flex-1 py-2 bg-blue-gray-800 outline-none `}
             placeholder={isExpanded ? "Title" : "Take a note..."}
             autoComplete="off"
-            {...register("noteTitle", { required: true })}
+            {...register("noteTitle", { required: "Note Title is required" })}
+            onChange={() => clearErrors()}
           />
           {isExpanded && (
-            <button onClick={closeInput}>
+            <button className="text-red-500" onClick={closeInput}>
               <FaTimes />
             </button>
           )}
@@ -144,10 +153,11 @@ const NoteForm = ({ email }: EmailType) => {
             ref(e);
             textAreaRef.current = e;
           }}
+          onChange={onChangeHandler}
         />
         {isExpanded && (
           <div className="flex justify-end border rounded-b border-t-0 border-cool-gray-100 p-2">
-            <button type="submit" className="pr-2">
+            <button type="submit" className="pr-2 text-teal-700">
               <FaLongArrowAltRight />
             </button>
           </div>
