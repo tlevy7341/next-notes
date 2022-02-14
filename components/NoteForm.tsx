@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { FaTimes, FaLongArrowAltRight } from "react-icons/fa";
 import useOnClickOutside from "use-onclickoutside";
 import { useForm } from "react-hook-form";
@@ -27,7 +27,10 @@ const NoteForm = ({ email }: EmailType) => {
   //Variable to control the textarea being shown
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+
   //Variables to handle the form
+
   const formRef = useRef(null);
   const {
     register,
@@ -35,6 +38,7 @@ const NoteForm = ({ email }: EmailType) => {
     handleSubmit,
     reset,
   } = useForm<FormData>();
+  const { ref, ...rest } = register("noteBody", { required: true });
 
   //Function to send the new note to the server
   const addNote = (newNote: NoteType) => {
@@ -91,6 +95,15 @@ const NoteForm = ({ email }: EmailType) => {
     },
   });
 
+  useEffect(() => {
+    //Sets the height of the note based on the content
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = "0px";
+      const scrollHeight = textAreaRef.current.scrollHeight;
+      textAreaRef.current.style.height = scrollHeight + "px";
+    }
+  }, []);
+
   return (
     <div className="flex flex-col justify-center  items-center pt-10">
       <span className="text-red-500 font-semibold pb-2">
@@ -126,7 +139,11 @@ const NoteForm = ({ email }: EmailType) => {
             isExpanded ? "block" : "hidden"
           }`}
           placeholder="Take a note..."
-          {...register("noteBody", { required: true })}
+          {...rest}
+          ref={(e) => {
+            ref(e);
+            textAreaRef.current = e;
+          }}
         />
         {isExpanded && (
           <div className="flex justify-end border rounded-b border-t-0 border-cool-gray-100 p-2">

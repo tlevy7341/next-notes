@@ -34,14 +34,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }  else if (req.method == "PUT") {
     const updatedData = JSON.parse(req.body);
     try {
-       /* const updatedNote = await prisma.notes.update({
+        const updatedNote = await prisma.notes.update({
         where: {
           id: updatedData.id,
         },
-        data: updatedData
+        data: {
+          noteTitle: updatedData.noteTitle,
+          noteBody: updatedData.noteBody
+        }
       });
-      res.status(200).json({ updatedNote }); */ 
-      res.status(200).json({ mes: "hi" });
+      res.status(200).json({ updatedNote }); 
     } catch (error) {
       res.status(500).json({ error: "Unable to delete the note" });
     }
