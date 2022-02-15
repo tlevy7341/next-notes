@@ -4,13 +4,7 @@ import type { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import useOnClickOutside from "use-onclickoutside";
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  dehydrate,
-} from "react-query";
+import { useQuery, QueryClient, dehydrate } from "react-query";
 import Masonry from "react-masonry-css";
 import NoteForm from "../components/NoteForm";
 import Note from "../components/Note";
@@ -61,25 +55,28 @@ const Home: NextPage = () => {
       </Head>
       {!session ? null : (
         <main className="min-h-screen w-screen flex flex-col bg-blue-gray-800 text-cool-gray-100">
-          <button
-            onClick={() => setShowDropdown(true)}
-            className="self-end sm:px-8 sm:py-1 sm:mr-20 sm:mt-10 bg-teal-700 rounded font-bold text-2xl"
-          >
-            {session!.user!.name![0]}
-          </button>
-          <div className="origin-bottom absolute right-10 top-20 mt-1 w-40 rounded-md  bg-white focus:outline-none">
-            {showDropdown ? (
-              <div className="py-1">
-                <button
-                  ref={buttonRef}
-                  onClick={handleLogOut}
-                  className="text-gray-700 block w-full text-left hover:bg-gray-200 px-4 py-2 text-sm"
-                >
-                  Sign out
-                </button>
-              </div>
-            ) : null}
+          <div className="flex justify-end">
+            <button
+              onClick={() => setShowDropdown(true)}
+              className="px-8 mt-2 sm:(px-8 py-1 mr-20 mt-10) bg-teal-700 rounded font-bold text-2xl"
+            >
+              {session!.user!.name![0]}
+            </button>
+            <div className="origin-bottom absolute right-10 top-20 mt-1 w-40 rounded-md  bg-white focus:outline-none">
+              {showDropdown && (
+                <div className="py-1">
+                  <button
+                    ref={buttonRef}
+                    onClick={handleLogOut}
+                    className="text-gray-700 block w-full text-left hover:bg-gray-200 px-4 py-2 text-sm"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
+
           <NoteForm email={session!.user!.email!} />
           <Masonry
             breakpointCols={{ default: 5, 500: 1 }}

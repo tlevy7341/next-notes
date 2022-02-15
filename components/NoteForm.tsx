@@ -120,7 +120,7 @@ const NoteForm = ({ email }: EmailType) => {
       <form
         ref={formRef}
         onSubmit={handleSubmit(submitNote)}
-        className="flex shadow-lg shadow-blue-gray-900 flex-col w-full px-4 sm:px-0 sm:w-1/3"
+        className="flex sm:(shadow-lg shadow-blue-gray-900) flex-col w-full px-4 sm:px-0 sm:w-1/3"
       >
         <div
           className={`flex border ${
