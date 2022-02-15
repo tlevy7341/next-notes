@@ -8,6 +8,7 @@ import { useQuery, QueryClient, dehydrate } from "react-query";
 import Masonry from "react-masonry-css";
 import NoteForm from "../components/NoteForm";
 import Note from "../components/Note";
+import { motion } from "framer-motion";
 
 type NoteType = {
   id: string;
@@ -56,13 +57,14 @@ const Home: NextPage = () => {
       {!session ? null : (
         <main className="min-h-screen w-screen flex flex-col bg-blue-gray-800 text-cool-gray-100">
           <div className="flex justify-end">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.1 }}
               onClick={() => setShowDropdown(true)}
-              className="px-8 mt-2 sm:(px-8 py-1 mr-20 mt-10) bg-teal-700 rounded font-bold text-2xl"
+              className="px-8 mr-5 mt-2 sm:(px-8 py-1 mr-20 mt-10) bg-teal-700 rounded font-bold text-2xl"
             >
               {session!.user!.name![0]}
-            </button>
-            <div className="origin-bottom absolute right-10 top-20 mt-1 w-40 rounded-md  bg-white focus:outline-none">
+            </motion.button>
+            <div className="origin-bottom absolute right-5 top-10 w-30 sm:(right-10 top-20 w-40) mt-1  rounded-md  bg-white focus:outline-none">
               {showDropdown && (
                 <div className="py-1">
                   <button
@@ -86,13 +88,19 @@ const Home: NextPage = () => {
             {data &&
               data.map(({ id, noteTitle, noteBody, email }) => {
                 return (
-                  <Note
-                    key={id}
-                    id={id}
-                    email={email}
-                    noteTitle={noteTitle}
-                    noteBody={noteBody}
-                  />
+                  <motion.div
+                    initial={{ x: "-100vh" }}
+                    animate={{ x: 0 }}
+                    className="!my-0"
+                  >
+                    <Note
+                      key={id}
+                      id={id}
+                      email={email}
+                      noteTitle={noteTitle}
+                      noteBody={noteBody}
+                    />
+                  </motion.div>
                 );
               })}
           </Masonry>

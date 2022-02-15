@@ -4,6 +4,7 @@ import useOnClickOutside from "use-onclickoutside";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import { useMutation, useQueryClient } from "react-query";
+import { motion } from "framer-motion";
 
 //Type for the Form
 type FormData = {
@@ -113,10 +114,18 @@ const NoteForm = ({ email }: EmailType) => {
 
   return (
     <div className="flex flex-col justify-center  items-center pt-10">
-      <span className="text-red-500 font-semibold pb-2">
+      <motion.span
+        animate={
+          errors.noteTitle?.message || errors.noteBody?.message
+            ? { opacity: 1 }
+            : { opacity: 0 }
+        }
+        transition={{ duration: 0.2 }}
+        className="text-red-500 font-semibold pb-2"
+      >
         {/* Display error message if there is one */}
         {errors.noteTitle?.message || errors.noteBody?.message}
-      </span>
+      </motion.span>
       <form
         ref={formRef}
         onSubmit={handleSubmit(submitNote)}
@@ -138,28 +147,43 @@ const NoteForm = ({ email }: EmailType) => {
             onChange={() => clearErrors()}
           />
           {isExpanded && (
-            <button className="text-red-500" onClick={closeInput}>
+            <motion.button
+              whileHover={{ scale: 1.2 }}
+              className="text-red-500"
+              onClick={closeInput}
+            >
               <FaTimes />
-            </button>
+            </motion.button>
           )}
         </div>
-        <textarea
-          className={`px-5 pt-2 bg-blue-gray-800 outline-none overflow-hidden border border-y-0 border-cool-gray-100 resize-none ${
-            isExpanded ? "block" : "hidden"
-          }`}
-          placeholder="Take a note..."
-          {...rest}
-          ref={(e) => {
-            ref(e);
-            textAreaRef.current = e;
-          }}
-          onChange={onChangeHandler}
-        />
+        <motion.div
+          initial={{ height: 0 }}
+          animate={isExpanded ? { height: 100 } : { height: 0 }}
+          transition={{ duration: 0.25 }}
+          className={`border border-y-0 border-cool-gray-100 `}
+        >
+          <textarea
+            className={`px-5 pt-2 bg-blue-gray-800 w-full outline-none overflow-hidden resize-none ${
+              isExpanded ? "block" : "hidden"
+            }`}
+            placeholder="Take a note..."
+            {...rest}
+            ref={(e) => {
+              ref(e);
+              textAreaRef.current = e;
+            }}
+            onChange={onChangeHandler}
+          />
+        </motion.div>
         {isExpanded && (
           <div className="flex justify-end border rounded-b border-t-0 border-cool-gray-100 p-2">
-            <button type="submit" className="pr-2 text-teal-700">
+            <motion.button
+              whileHover={{ scale: 1.2 }}
+              type="submit"
+              className="pr-2 text-teal-700"
+            >
               <FaLongArrowAltRight />
-            </button>
+            </motion.button>
           </div>
         )}
       </form>

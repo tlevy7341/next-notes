@@ -3,6 +3,7 @@ import { FaTrash, FaSave } from "react-icons/fa";
 import useOnClickOutside from "use-onclickoutside";
 import { useMutation, useQueryClient } from "react-query";
 import { useForm } from "react-hook-form";
+import { animate, motion } from "framer-motion";
 
 type NoteType = {
   id: string;
@@ -141,11 +142,19 @@ const Note = ({ id, email, noteTitle, noteBody }: NoteType) => {
   }, []);
 
   return (
-    <>
-      <div className="text-red-500 text-sm font-semibold sm:(pb-6 !m-0 h-4)">
+    <motion.div animate={isSelected ? { scale: 1.1 } : { scale: 1 }}>
+      <motion.div
+        animate={
+          errors.noteTitle?.message || errors.noteBody?.message
+            ? { opacity: 1 }
+            : { opacity: 0 }
+        }
+        transition={{ duration: 0.2 }}
+        className="text-red-500 text-sm font-semibold sm:(pb-6 !m-0 h-4)"
+      >
         {/* Display error message if there is one */}
         {errors.noteTitle?.message || errors.noteBody?.message}
-      </div>
+      </motion.div>
       <form
         onSubmit={handleSubmit(submitNote)}
         ref={clickRef}
@@ -176,7 +185,8 @@ const Note = ({ id, email, noteTitle, noteBody }: NoteType) => {
             isSelected ? "opacity-100" : "opacity-0"
           }`}
         >
-          <button
+          <motion.button
+            whileHover={{ scale: 1.2 }}
             onClick={() => {
               deleteMutation.mutate({ id, email, noteTitle, noteBody });
             }}
@@ -185,18 +195,19 @@ const Note = ({ id, email, noteTitle, noteBody }: NoteType) => {
             } `}
           >
             <FaTrash className="text-red-500" />
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.2 }}
             type="submit"
             className={`text-teal-700 mx-3 my-1 ${
               isSelected ? "cursor-pointer" : "cursor-default"
             } `}
           >
             <FaSave />
-          </button>
+          </motion.button>
         </div>
       </form>
-    </>
+    </motion.div>
   );
 };
 
