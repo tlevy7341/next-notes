@@ -49,7 +49,9 @@ const SignIn: NextPage = ({ providers }: any) => {
 
 export default SignIn;
 
-/* export const getServerSideProps = async (context: NextPageContext) => {
-  return { props: { providers: await getProviders() } };
+export const getServerSideProps = async (context: NextPageContext) => {
+  const providers = await getProviders();
+  return {
+    props: { providers },
+  };
 };
- */
