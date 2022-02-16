@@ -18,7 +18,7 @@ type NoteType = {
   createdAt: Date;
 };
 const getNotes = async () => {
-  const response = await fetch("http://localhost:3000/api/notes");
+  const response = await fetch("/api/notes");
   return response.json();
 };
 
