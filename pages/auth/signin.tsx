@@ -12,6 +12,7 @@ const SignIn: NextPage = ({ providers }: any) => {
     if (session?.user) {
       router.push("/");
     }
+    console.log(providers);
   }, [session]);
 
   return (
