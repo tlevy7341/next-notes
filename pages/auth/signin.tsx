@@ -4,7 +4,7 @@ import Head from "next/head";
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 
-const SignIn = ({ providers }: any) => {
+const SignIn: NextPage = ({ providers }: any) => {
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -30,7 +30,7 @@ const SignIn = ({ providers }: any) => {
           <h1 className="font-bold sm:text-3xl mb-20">Notes</h1>
 
           <div>
-            {Object.values(providers).map((provider: any) => (
+            {/*             {Object.values(providers).map((provider: any) => (
               <div className="my-6" key={provider.name}>
                 <button
                   className="px-3 py-1 bg-sky-400 ring"
@@ -39,7 +39,7 @@ const SignIn = ({ providers }: any) => {
                   Sign in with {provider.name}
                 </button>
               </div>
-            ))}
+            ))} */}
           </div>
         </main>
       )}
@@ -49,6 +49,7 @@ const SignIn = ({ providers }: any) => {
 
 export default SignIn;
 
-export const getServerSideProps = async (context: NextPageContext) => {
+/* export const getServerSideProps = async (context: NextPageContext) => {
   return { props: { providers: await getProviders() } };
 };
+ */
