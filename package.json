@@ -1,6 +1,7 @@
 {
   "name": "tlev-next-notes",
   "private": true,
+  "homepage": "https://next-notes-self.vercel.app",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
