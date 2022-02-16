@@ -3,7 +3,7 @@ import { FaTrash, FaSave } from "react-icons/fa";
 import useOnClickOutside from "use-onclickoutside";
 import { useMutation, useQueryClient } from "react-query";
 import { useForm } from "react-hook-form";
-import { animate, motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 type NoteType = {
   id: string;
@@ -26,7 +26,7 @@ const Note = ({ id, email, noteTitle, noteBody }: NoteType) => {
   //Variables to handle the form
   const {
     register,
-    formState: { errors },
+    formState: { errors, isDirty, isSubmitted },
     handleSubmit,
     reset,
   } = useForm<FormData>({
@@ -59,7 +59,12 @@ const Note = ({ id, email, noteTitle, noteBody }: NoteType) => {
   };
 
   const submitNote = (formData: FormData) => {
-    const updatedNote = { id, email, ...formData };
+    const updatedNote = {
+      id,
+      email,
+      noteTitle: formData.noteTitle.trimEnd(),
+      noteBody: formData.noteBody.trimEnd(),
+    };
     updateMutation.mutate(updatedNote);
   };
 
@@ -70,7 +75,9 @@ const Note = ({ id, email, noteTitle, noteBody }: NoteType) => {
       textAreaRef.current.readOnly = true;
     }
     setIsSelected(false);
-    reset();
+    if (!isSubmitted && isDirty) {
+      reset();
+    }
   });
 
   //Function to update a note
@@ -83,6 +90,7 @@ const Note = ({ id, email, noteTitle, noteBody }: NoteType) => {
 
   const updateMutation = useMutation(updateNote, {
     onMutate: (updatedNote: NoteType) => {
+      setIsSelected(false);
       const previousNotes = queryClient.getQueryData("notes");
       queryClient.setQueryData(["notes", updatedNote.id], updatedNote);
       return { previousNotes };
@@ -94,12 +102,11 @@ const Note = ({ id, email, noteTitle, noteBody }: NoteType) => {
       }
     },
     onSettled: () => {
-      setIsSelected(false);
       if (inputRef.current && textAreaRef.current) {
         inputRef.current.readOnly = false;
         textAreaRef.current.readOnly = false;
       }
-      queryClient.invalidateQueries("notes");
+      queryClient.invalidateQueries();
     },
   });
 

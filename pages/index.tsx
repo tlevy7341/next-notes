@@ -8,7 +8,7 @@ import { useQuery, QueryClient, dehydrate } from "react-query";
 import Masonry from "react-masonry-css";
 import NoteForm from "../components/NoteForm";
 import Note from "../components/Note";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 type NoteType = {
   id: string;
@@ -60,7 +60,7 @@ const Home: NextPage = () => {
             <motion.button
               whileHover={{ scale: 1.1 }}
               onClick={() => setShowDropdown(true)}
-              className="px-8 mr-5 mt-2 sm:(px-8 py-1 mr-20 mt-10) bg-teal-700 rounded font-bold text-2xl"
+              className="px-8 mr-5 mt-2 sm:(px-8 py-1 mr-20 mt-10) bg-teal-700 rounded font-bold text-2xl shadow-sm shadow-blue-gray-900"
             >
               {session!.user!.name![0]}
             </motion.button>
@@ -88,19 +88,13 @@ const Home: NextPage = () => {
             {data &&
               data.map(({ id, noteTitle, noteBody, email }) => {
                 return (
-                  <motion.div
-                    initial={{ x: "-100vh" }}
-                    animate={{ x: 0 }}
-                    className="!my-0"
-                  >
-                    <Note
-                      key={id}
-                      id={id}
-                      email={email}
-                      noteTitle={noteTitle}
-                      noteBody={noteBody}
-                    />
-                  </motion.div>
+                  <Note
+                    key={id}
+                    id={id}
+                    email={email}
+                    noteTitle={noteTitle}
+                    noteBody={noteBody}
+                  />
                 );
               })}
           </Masonry>

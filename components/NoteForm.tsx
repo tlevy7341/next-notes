@@ -57,8 +57,8 @@ const NoteForm = ({ email }: EmailType) => {
     const newNote: NoteType = {
       id: uuidv4(),
       email,
-      noteTitle: data.noteTitle,
-      noteBody: data.noteBody,
+      noteTitle: data.noteTitle.trimEnd(),
+      noteBody: data.noteBody.trimEnd(),
       createdAt: new Date(),
     };
     mutate(newNote);
