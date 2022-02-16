@@ -13,6 +13,7 @@ const SignIn: NextPage = ({ providers }: any) => {
       router.push("/");
     }
     console.log(providers);
+    console.log(process.env.NEXTAUTH_URL);
   }, [session]);
 
   return (
