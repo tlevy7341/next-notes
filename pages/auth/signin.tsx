@@ -14,6 +14,7 @@ const SignIn: NextPage = ({ providers }: any) => {
     }
     console.log(providers);
     console.log(process.env.NEXTAUTH_URL);
+    console.log(process.env.GOOGLE_SECRET);
   }, [session]);
 
   return (
