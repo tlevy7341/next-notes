@@ -12,10 +12,6 @@ const SignIn: NextPage = ({ providers }: any) => {
     if (session?.user) {
       router.push("/");
     }
-    console.log(providers);
-    console.log(process.env.NEXTAUTH_URL);
-    console.log(process.env.GOOGLE_SECRET);
-    console.log(process.env.DATABASE_URL);
   }, [session]);
 
   return (
@@ -34,7 +30,7 @@ const SignIn: NextPage = ({ providers }: any) => {
           <h1 className="font-bold sm:text-3xl mb-20">Notes</h1>
 
           <div>
-            {/*             {Object.values(providers).map((provider: any) => (
+            {Object.values(providers).map((provider: any) => (
               <div className="my-6" key={provider.name}>
                 <button
                   className="px-3 py-1 bg-sky-400 ring"
@@ -43,7 +39,7 @@ const SignIn: NextPage = ({ providers }: any) => {
                   Sign in with {provider.name}
                 </button>
               </div>
-            ))} */}
+            ))}
           </div>
         </main>
       )}

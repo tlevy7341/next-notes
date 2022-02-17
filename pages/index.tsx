@@ -8,7 +8,7 @@ import { useQuery, QueryClient, dehydrate } from "react-query";
 import Masonry from "react-masonry-css";
 import NoteForm from "../components/NoteForm";
 import Note from "../components/Note";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 type NoteType = {
   id: string;
